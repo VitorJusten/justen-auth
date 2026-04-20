@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="v0.01.0" author="Vitor Justen">
+        <comment>Criação das tabelas do Spring Authorization Server e dados iniciais</comment>
+
+        <sql>
+            <![CDATA[
+                CREATE TABLE oauth2_registered_client (
+                    id varchar(100) PRIMARY KEY,
+                    client_id varchar(100) NOT NULL,
+                    client_id_issued_at timestamp,
+                    client_secret text,
+                    client_secret_expires_at timestamp,
+                    client_name text NOT NULL,
+                    client_authentication_methods text NOT NULL,
+                    authorization_grant_types text NOT NULL,
+                    redirect_uris text,
+                    post_logout_redirect_uris text,
+                    scopes text NOT NULL,
+                    client_settings text NOT NULL,
+                    token_settings text NOT NULL
+                );
+
+                CREATE TABLE oauth2_authorization (
+                    id varchar(100) PRIMARY KEY,
+                    registered_client_id varchar(100) NOT NULL,
+                    principal_name varchar(200) NOT NULL,
+                    authorization_grant_type varchar(100) NOT NULL,
+                    attributes text,
+                    state text,
+
+                    authorization_code_value text,
+                    authorization_code_issued_at timestamp,
+                    authorization_code_expires_at timestamp,
+                    authorization_code_metadata text,
+                    authorized_scopes text,
+
+                    access_token_value text,
+                    access_token_issued_at timestamp,
+                    access_token_expires_at timestamp,
+                    access_token_metadata text,
+                    access_token_type varchar(100),
+                    access_token_scopes text,
+
+                    refresh_token_value text,
+                    refresh_token_issued_at timestamp,
+                    refresh_token_expires_at timestamp,
+                    refresh_token_metadata text,
+
+                    oidc_id_token_value text,
+                    oidc_id_token_issued_at timestamp,
+                    oidc_id_token_expires_at timestamp,
+                    oidc_id_token_metadata text,
+
+                    user_code_value text,
+                    user_code_issued_at timestamp,
+                    user_code_expires_at timestamp,
+                    user_code_metadata text,
+
+                    device_code_value text,
+                    device_code_issued_at timestamp,
+                    device_code_expires_at timestamp,
+                    device_code_metadata text
+                );
+
+                CREATE TABLE oauth2_authorization_consent (
+                    registered_client_id varchar(100) NOT NULL,
+                    principal_name varchar(200) NOT NULL,
+                    authorities text NOT NULL,
+                    PRIMARY KEY (registered_client_id, principal_name)
+                );
+
+                CREATE INDEX idx_oauth2_authorization_principal
+                    ON oauth2_authorization(principal_name);
+
+                CREATE INDEX idx_oauth2_authorization_client
+                    ON oauth2_authorization(registered_client_id);
+
+                INSERT INTO oauth2_registered_client (
+                    id,
+                    client_id,
+                    client_id_issued_at,
+                    client_secret,
+                    client_name,
+                    client_authentication_methods,
+                    authorization_grant_types,
+                    redirect_uris,
+                    scopes,
+                    client_settings,
+                    token_settings
+                )
+                VALUES (
+                    'justen-client-id',
+                    'justen-client',
+                    now(),
+                    '$2a$10$U0wmfaKkgDRYpTI.G.L0sOeaIrmptzoRnTVu4helfYwc0ku1i7hwm',
+                    'Justen Client',
+                    'client_secret_basic',
+                    'authorization_code,refresh_token,client_credentials',
+                    'http://localhost:8081/login/oauth2/code',
+                    'api',
+                    '{"@class":"java.util.HashMap","settings.client.require-proof-key":false,"settings.client.require-authorization-consent":false}',
+                    '{"@class":"java.util.HashMap",
+                      "settings.token.authorization-code-time-to-live":["java.time.Duration",300],
+                      "settings.token.access-token-time-to-live":["java.time.Duration",3600],
+                      "settings.token.refresh-token-time-to-live":["java.time.Duration",86400],
+                      "settings.token.reuse-refresh-tokens":true
+                    }'
+                );
+            ]]>
+        </sql>
+
+        <rollback>
+            <sql>
+            </sql>
+        </rollback>
+
+    </changeSet>
+</databaseChangeLog>

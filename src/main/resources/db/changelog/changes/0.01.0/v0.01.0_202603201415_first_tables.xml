@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+	<changeSet id="v0.01.0" author="Vitor Justen" >
+		<comment>First tables</comment>
+		<sql>
+			<![CDATA[
+			
+				CREATE TABLE IF NOT EXISTS role(
+					role_cd_id UUID PRIMARY KEY,
+					role_tx_name TEXT UNIQUE NOT NULL
+				);
+			
+				INSERT INTO role(role_cd_id, role_tx_name) VALUES
+				('0a5982c8-baa4-4e66-8614-01cf35ad4cfc', 'DEV'),
+				('0b5982c8-baa4-4e66-8614-01cf35ad4cfc', 'ADM');
+			
+				CREATE TABLE IF NOT EXISTS user_account(
+					usac_cd_id UUID PRIMARY KEY,
+					usac_tx_username TEXT UNIQUE NOT NULL,
+					usac_tx_password TEXT NOT NULL,
+					usac_nm_account_locked BOOLEAN NOT NULL DEFAULT FALSE,
+					usac_nm_failed_login_attempts INTEGER DEFAULT 0,
+					usac_dt_lock_until TIMESTAMP,
+					usac_dt_last_login_at TIMESTAMP,
+					usac_dt_created_at TIMESTAMP NOT NULL,
+					usac_dt_updated_at TIMESTAMP
+				);
+				
+				CREATE TABLE user_role (
+				  usac_cd_id UUID NOT NULL REFERENCES user_account(usac_cd_id) ON UPDATE NO ACTION ON DELETE CASCADE,
+				  role_cd_id UUID NOT NULL REFERENCES role(role_cd_id) ON UPDATE NO ACTION ON DELETE CASCADE
+				);
+				
+				INSERT INTO user_account(
+					usac_cd_id,
+					usac_tx_username,
+					usac_tx_password,
+					usac_nm_account_locked,
+					usac_nm_failed_login_attempts,
+					usac_dt_created_at
+				) VALUES (
+					'3e2f4c57-1f72-4f59-9f89-54f7a8a8c5c1',
+					'VitorJusten',
+					'$2a$10$cDI0ZWVUTDq/u5VUe0ZAcuhI11j8g/KyqxxIWHkwafXGVdFg04X12',
+					FALSE,
+					0,
+					NOW()
+				);
+				
+				INSERT INTO user_role (usac_cd_id, role_cd_id) VALUES
+					('3e2f4c57-1f72-4f59-9f89-54f7a8a8c5c1', '0a5982c8-baa4-4e66-8614-01cf35ad4cfc'),
+					('3e2f4c57-1f72-4f59-9f89-54f7a8a8c5c1', '0b5982c8-baa4-4e66-8614-01cf35ad4cfc');
+			
+			]]>
+		</sql>
+		<rollback>
+
+		</rollback>
+	</changeSet>	
+	
+</databaseChangeLog>

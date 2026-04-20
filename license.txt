@@ -1,0 +1,41 @@
+JUSTEN-AUTH LICENSE - https://github.com/VitorJusten/justen-auth
+
+Copyright (c) VitorJusten
+
+ENGLISH
+-------
+This project (justen-auth) is free to use, copy, modify, and distribute for any purpose.
+
+You are allowed to use this project in personal or commercial applications, and you may modify the source code as needed.
+
+The only requirement is that proper credit must be maintained to the original author:
+
+GitHub: https://github.com/VitorJusten
+
+Removing or altering this credit is not permitted.
+
+
+PORTUGUÊS
+---------
+Este projeto (justen-auth) é livre para uso, cópia, modificação e distribuição para qualquer finalidade.
+
+Você pode utilizar este projeto em aplicações pessoais ou comerciais, e pode modificar o código-fonte conforme necessário.
+
+A única exigência é que os créditos ao autor original sejam mantidos:
+
+GitHub: https://github.com/VitorJusten
+
+Remover ou alterar esses créditos não é permitido.
+
+
+ESPAÑOL
+-------
+Este proyecto (justen-auth) es libre para usar, copiar, modificar y distribuir para cualquier propósito.
+
+Se permite utilizar este proyecto en aplicaciones personales o comerciales, y modificar el código fuente según sea necesario.
+
+El único requisito es que se mantengan los créditos al autor original:
+
+GitHub: https://github.com/VitorJusten
+
+No está permitido eliminar o modificar estos créditos.

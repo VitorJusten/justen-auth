@@ -1,0 +1,49 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+
+  application:
+    name: justen-auth
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/justen-authuser-db}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: ${JPA_SHOW_SQL:false}
+
+auth:
+
+  ui-url: ${AUTH_UI_URL:http://localhost:3000/}
+  issuer: ${AUTH_ISSUER:http://localhost:8081}
+
+  cors:
+    allowed-origins:
+      - ${AUTH_CORS_ORIGIN:http://localhost:3000}
+
+  timer:
+    access-token-ttl: ${AUTH_ACCESS_TOKEN_TTL:5}
+    refresh-token-ttl: ${AUTH_REFRESH_TOKEN_TTL:10}
+
+  authorization:
+    client-id: ${AUTH_CLIENT_ID:justen-client}
+    client-secret: ${AUTH_CLIENT_SECRET}
+    scope: ${AUTH_CLIENT_SCOPE:USER}
+
+  api:
+    client-id: ${API_CLIENT_ID:justen-gateway}
+    client-secret: ${API_CLIENT_SECRET}
+    scope: ${API_CLIENT_SCOPE:API}
+
+  jwt:
+    public-key: ${JWT_PUBLIC_KEY:}
+    private-key: ${JWT_PRIVATE_KEY:}

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Justen Auth</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+
+            /* base */
+
+            --color-bg: #111;
+            --color-overlay: rgba(0, 0, 0, .65);
+
+            /* surfaces */
+
+            --surface: #121212;
+            --surface-input: #0c0c0c;
+            --surface-button: #111;
+
+            /* borders */
+
+            --border: #2a2a2a;
+            --border-focus: #4b5563;
+
+            /* text */
+
+            --text: #f4f4f4;
+            --muted: #9ca3af;
+
+            /* states */
+
+            --hover: #1f1f1f;
+            --error: #ef4444;
+            --success: #22c55e;
+
+            /* primary */
+
+            --primary-bg: #e5e5e5;
+            --primary-text: #000;
+
+            /* shadows */
+
+            --shadow-modal: rgba(0, 0, 0, .5);
+            --shadow-soft: rgba(0, 0, 0, .3);
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: "Inter", system-ui, -apple-system, sans-serif;
+            background: var(--color-bg);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* overlay */
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: var(--color-overlay);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        /* modal */
+
+        .modal {
+            width: 100%;
+            max-width: 420px;
+            animation: modalIn .18s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(.96)
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1)
+            }
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 30px;
+            box-shadow:
+                0 20px 40px var(--shadow-modal),
+                0 2px 6px var(--shadow-soft);
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 12px;
+            top: 10px;
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        h1 {
+            margin: 0 0 6px;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .subtitle {
+            margin: 0 0 26px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: var(--muted);
+        }
+
+        input {
+            width: 100%;
+            padding: 11px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface-input);
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        button {
+            flex: 1;
+            padding: 11px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface-button);
+            color: var(--text);
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: var(--hover);
+        }
+
+        button.primary {
+            background: var(--primary-bg);
+            color: var(--primary-text);
+            border: none;
+        }
+
+        .error {
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--error);
+        }
+
+        .success {
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--success);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .notice-backdrop {
+            z-index: 1100;
+            background: var(--color-overlay)
+        }
+
+        .notice-card h1 {
+            margin-bottom: 10px;
+        }
+
+        .notice-copy {
+            margin: 0;
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="modal-backdrop" id="auth-modal">
+
+        <div class="modal">
+
+            <!-- LOGIN -->
+
+            <div class="card" id="login-card">
+
+                <button class="close" onclick="closeModal()">×</button>
+
+                <h1>Log in</h1>
+                <p class="subtitle">Access your account</p>
+
+                <form th:action="@{/login}" method="post" id="login-form">
+
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                    <div class="field">
+                        <label>Username</label>
+                        <input id="username" name="username" autocomplete="username" required>
+                    </div>
+
+                    <div class="field">
+                        <label>Password</label>
+                        <input id="password" name="password" type="password" autocomplete="current-password" required>
+                    </div>
+
+                    <div class="error" th:if="${param.error}">
+                        User or password are incorrect
+                    </div>
+
+                    <div class="success" th:if="${param.logout}">
+                        You have been logged out
+                    </div>
+
+                    <div class="actions">
+                        <button class="primary" type="submit">Log in</button>
+                        <button type="button" onclick="toggleSignup(true)">Sign up</button>
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- SIGNUP -->
+
+            <div class="card hidden" id="signup-card">
+
+                <button class="close" onclick="closeModal()">×</button>
+
+                <h1>Create account</h1>
+                <p class="subtitle">Register a new user</p>
+
+                <form id="signup-form">
+
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                    <div class="field">
+                        <label>Username</label>
+                        <input id="s-username" required>
+                    </div>
+
+                    <div class="field">
+                        <label>Password</label>
+                        <input id="s-password" type="password" required>
+                    </div>
+
+                    <div class="field">
+                        <label>Confirm password</label>
+                        <input id="s-confirm" type="password" required>
+                    </div>
+
+                    <div id="signup-error" class="error hidden">
+                        Username already exists
+                    </div>
+
+                    <div class="actions">
+                        <button class="primary" type="button" onclick="createUser()">Create</button>
+                        <button type="button" onclick="toggleSignup(false)">Cancel</button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal-backdrop notice-backdrop" id="locked-modal" th:if="${param.locked}">
+        <div class="modal">
+            <div class="card notice-card">
+                <h1>Account locked</h1>
+
+                <p class="notice-copy" th:if="${param.lockUntil != null and !#lists.isEmpty(param.lockUntil)}"
+                    th:text="'This account has been locked until ' + ${param.lockUntil[0]} + '.'">
+                    This account has been locked until April 20, 2026 at 11:45 AM -03:00.
+                </p>
+
+                <p class="notice-copy" th:if="${param.lockUntil == null or #lists.isEmpty(param.lockUntil)}">
+                    This account has been locked for an indefinite period.
+                </p>
+
+                <div class="actions">
+                    <button class="primary" type="button" onclick="closeLockedModal()">Understood</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+
+        function toggleSignup(show) {
+            document.getElementById("signup-card").classList.toggle("hidden", !show)
+            document.getElementById("login-card").classList.toggle("hidden", show)
+        }
+
+        function closeModal() {
+            document.getElementById("auth-modal").style.display = "none"
+        }
+
+        function closeLockedModal() {
+            const modal = document.getElementById("locked-modal")
+            if (modal) {
+                modal.style.display = "none"
+            }
+        }
+
+        /* fechar com ESC */
+
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape") closeModal()
+        })
+
+        /* fechar clicando fora */
+
+        document.getElementById("auth-modal").addEventListener("click", e => {
+            if (e.target.id === "auth-modal") closeModal()
+        })
+
+        const lockedModal = document.getElementById("locked-modal")
+        if (lockedModal) {
+            lockedModal.addEventListener("click", e => {
+                if (e.target.id === "locked-modal") closeLockedModal()
+            })
+        }
+
+        async function createUser() {
+
+            const username = document.getElementById("s-username").value.trim()
+            const password = document.getElementById("s-password").value.trim()
+            const confirm = document.getElementById("s-confirm").value.trim()
+
+            const error = document.getElementById("signup-error")
+            error.classList.add("hidden")
+
+            if (password !== confirm) {
+                error.textContent = "Passwords do not match"
+                error.classList.remove("hidden")
+                return
+            }
+
+            try {
+
+                const token = document.querySelector('#signup-form input[name="_csrf"]').value
+
+                const response = await fetch("/user", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": token
+                    },
+                    body: JSON.stringify({ username, password })
+                })
+
+                if (!response.ok) throw new Error()
+
+                document.getElementById("username").value = username
+                document.getElementById("password").value = password
+
+                toggleSignup(false)
+
+                document.getElementById("login-form").submit()
+
+            } catch {
+
+                error.textContent = "Username already exists"
+                error.classList.remove("hidden")
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>
