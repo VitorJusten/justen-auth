@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.justen.auth.domain.model.Role;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,9 +18,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class RoleDto {
-
-	private UUID id;
 	
+	@NotBlank
+	private UUID id;
+	@NotBlank
 	private String name;
 
 	public RoleDto(Role role) {

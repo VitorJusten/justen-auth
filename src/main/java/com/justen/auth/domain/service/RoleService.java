@@ -48,7 +48,7 @@ public class RoleService {
 		securityUtils.validateRoles(List.of(RoleEnum.ADM.getName(), RoleEnum.DEV.getName()));
 		Role existing = getRoleById(id);
 
-		BeanUtils.copyProperties(role, existing);
+		BeanUtils.copyProperties(role, existing, "id");
 
 		return roleRepository.save(existing);
 	}

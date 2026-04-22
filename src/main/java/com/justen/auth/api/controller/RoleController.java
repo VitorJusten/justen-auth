@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.justen.auth.domain.model.Role;
+import com.justen.auth.domain.model.dto.RoleDto;
+import com.justen.auth.domain.model.dto.input.RoleInputDto;
 import com.justen.auth.domain.service.RoleService;
 
 import lombok.AllArgsConstructor;
@@ -32,23 +33,23 @@ public class RoleController {
 	private final RoleService service;
 
 	@GetMapping
-	public List<Role> getAll() {
-		return service.getAllRoles();
+	public List<RoleDto> getAll() {
+		return service.getAllRoles().stream().map(RoleDto::new).toList();
 	}
 
 	@GetMapping("/{id}")
-	public Role getById(@PathVariable UUID id) {
-		return service.getRoleById(id);
+	public RoleDto getById(@PathVariable UUID id) {
+		return new RoleDto(service.getRoleById(id));
 	}
 
 	@PostMapping
-	public Role create(@RequestBody Role role) {
-		return service.createRole(role);
+	public RoleDto create(@RequestBody RoleInputDto role) {
+		return new RoleDto(service.createRole(role.toEntity()));
 	}
 
 	@PutMapping("/{id}")
-	public Role update(@PathVariable UUID id, @RequestBody Role role) {
-		return service.updateRole(id, role);
+	public RoleDto update(@PathVariable UUID id, @RequestBody RoleInputDto role) {
+		return new RoleDto(service.updateRole(id, role.toEntity()));
 	}
 
 	@DeleteMapping("/{id}")
