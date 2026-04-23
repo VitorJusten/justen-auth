@@ -12,15 +12,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import com.justen.auth.api.security.handler.LoginFailureHandler;
-import com.justen.auth.infrastructure.AuthUserProperties;
+import com.justen.infrastructure.AppProperties;
 
 import jakarta.servlet.http.Cookie;
 import lombok.AllArgsConstructor;
@@ -38,7 +38,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ResourceServerConfig {
 
-	private final AuthUserProperties properties;
+	private final AppProperties properties;
 	private final CorsConfig corsConfig;
 	private final LoginFailureHandler loginFailureHandler;
 

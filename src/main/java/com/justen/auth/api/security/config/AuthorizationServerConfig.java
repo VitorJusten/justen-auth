@@ -30,9 +30,9 @@ import org.springframework.security.oauth2.server.authorization.token.JwtEncodin
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 
-import com.justen.auth.domain.model.User;
 import com.justen.auth.api.security.handler.LoginFailureHandler;
-import com.justen.auth.infrastructure.AuthUserProperties;
+import com.justen.auth.domain.model.User;
+import com.justen.infrastructure.AppProperties;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -54,7 +54,7 @@ import lombok.AllArgsConstructor;
 public class AuthorizationServerConfig {
 
 	private final CorsConfig corsConfig;
-	private final AuthUserProperties properties;
+	private final AppProperties properties;
 	private final PasswordEncoder passwordEncoder;
 	private final LoginFailureHandler loginFailureHandler;
 
@@ -156,7 +156,7 @@ public class AuthorizationServerConfig {
 	}
 
 	private RSAKey loadRsaKey() {
-		AuthUserProperties.Jwt jwt = properties.getJwt();
+		AppProperties.Jwt jwt = properties.getJwt();
 
 		try {
 			if (jwt != null && StringUtils.isNotBlank(jwt.getPrivateKey())) {

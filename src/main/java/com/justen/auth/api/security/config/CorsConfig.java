@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import com.justen.auth.infrastructure.AuthUserProperties;
+import com.justen.infrastructure.AppProperties;
 
 import lombok.AllArgsConstructor;
 
@@ -22,7 +22,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CorsConfig {
 
-	private final AuthUserProperties properties;
+	private final AppProperties properties;
 
 	public void corsCustomizer(HttpSecurity http) throws Exception {
 		http.cors(corsCustomizer -> {

@@ -10,7 +10,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Component;
 
 import com.justen.auth.domain.exception.BusinessException;
-import com.justen.auth.infrastructure.AuthUserProperties;
+import com.justen.infrastructure.AppProperties;
 
 import lombok.AllArgsConstructor;
 
@@ -25,7 +25,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SecurityUtils {
 
-	private final AuthUserProperties properties;
+	private final AppProperties properties;
 	
 	public void validateRoles(List<String> roles) {
 
