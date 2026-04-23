@@ -11,9 +11,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * @since   2023-06-01
- * @version 0.0.1
- * @author  <a href="http://vertis-solutions.com">Vertis Solutions</a>
+ * 
+ * @Author GitHub - VitorJusten
+ * @ProjectName justen-auth
+ * @Year 2026
+ *
  */
 @JsonInclude(Include.NON_NULL)
 @Data
