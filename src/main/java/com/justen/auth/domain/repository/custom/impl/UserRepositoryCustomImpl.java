@@ -1,9 +1,5 @@
 package com.justen.auth.domain.repository.custom.impl;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.justen.auth.core.utils.DateUtils;
 import com.justen.auth.domain.model.dto.RoleDto;
 import com.justen.auth.domain.model.dto.UserDto;
 import com.justen.auth.domain.repository.custom.UserRepositoryCustom;
@@ -38,6 +35,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 	@PersistenceContext
 	private final EntityManager entityManager;
+	private final DateUtils dateUtils;
 
 	@Override
 	public Page<UserDto> getAll(Pageable pageable, String filter, String id, String username, String role,
@@ -193,10 +191,10 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 			}
 
 			dto.setAccountLocked((Boolean) row[3]);
-			dto.setCreatedAt(toOffsetDateTime(row[4]));
-			dto.setLastLoginAt(toOffsetDateTime(row[5]));
-			dto.setLockUntil(toOffsetDateTime(row[6]));
-			dto.setUpdatedAt(toOffsetDateTime(row[7]));
+			dto.setCreatedAt(dateUtils.toOffsetDateTime(row[4]));
+			dto.setLastLoginAt(dateUtils.toOffsetDateTime(row[5]));
+			dto.setLockUntil(dateUtils.toOffsetDateTime(row[6]));
+			dto.setUpdatedAt(dateUtils.toOffsetDateTime(row[7]));
 
 			users.add(dto);
 		}
@@ -206,19 +204,4 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		return new PageImpl<>(users, pageable, total);
 	}
 
-	private OffsetDateTime toOffsetDateTime(Object value) {
-		if (value == null) {
-			return null;
-		}
-		if (value instanceof OffsetDateTime odt) {
-			return odt;
-		}
-		if (value instanceof Timestamp ts) {
-			return ts.toInstant().atOffset(ZoneOffset.UTC);
-		}
-		if (value instanceof LocalDateTime ldt) {
-			return ldt.atOffset(ZoneOffset.UTC);
-		}
-		return OffsetDateTime.parse(value.toString());
-	}
 }
