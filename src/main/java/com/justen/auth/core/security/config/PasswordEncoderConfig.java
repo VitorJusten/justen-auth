@@ -1,4 +1,4 @@
-package com.justen.auth.api.security.config;
+package com.justen.auth.core.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
