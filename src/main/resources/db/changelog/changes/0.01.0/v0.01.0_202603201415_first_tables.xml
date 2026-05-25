@@ -46,8 +46,8 @@
 					usac_dt_created_at
 				) VALUES (
 					'3e2f4c57-1f72-4f59-9f89-54f7a8a8c5c1',
-					'VitorJusten',
-					'$2a$10$cDI0ZWVUTDq/u5VUe0ZAcuhI11j8g/KyqxxIWHkwafXGVdFg04X12',
+					'1',
+					'$2a$10$13wqs4kATCKCxAX4TzLhCuvfJ4PzpCn4IYL6suEqTVwCTLzw6eMEG',
 					FALSE,
 					0,
 					NOW()
