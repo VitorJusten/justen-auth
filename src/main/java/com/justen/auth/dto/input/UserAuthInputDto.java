@@ -1,4 +1,4 @@
-package com.justen.auth.domain.model.dto.input;
+package com.justen.auth.dto.input;
 
 import com.justen.auth.domain.model.User;
 

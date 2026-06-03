@@ -14,8 +14,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.justen.auth.core.utils.DateUtils;
 import com.justen.auth.domain.repository.custom.UserRepositoryCustom;
-import com.justen.auth.dtos.RoleDto;
-import com.justen.auth.dtos.UserDto;
+import com.justen.auth.dto.RoleDto;
+import com.justen.auth.dto.UserDto;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

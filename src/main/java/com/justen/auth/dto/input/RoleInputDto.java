@@ -1,4 +1,4 @@
-package com.justen.auth.domain.model.dto.input;
+package com.justen.auth.dto.input;
 
 import java.util.HashSet;
 import java.util.List;

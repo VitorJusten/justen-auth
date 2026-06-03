@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.justen.auth.domain.model.dto.input.UserAuthInputDto;
-import com.justen.auth.domain.model.dto.input.UserInputDto;
 import com.justen.auth.domain.service.UserService;
-import com.justen.auth.dtos.UserDto;
+import com.justen.auth.dto.UserDto;
+import com.justen.auth.dto.input.UserAuthInputDto;
+import com.justen.auth.dto.input.UserInputDto;
 
 import lombok.AllArgsConstructor;
 

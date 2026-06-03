@@ -1,4 +1,4 @@
-package com.justen.auth.dtos;
+package com.justen.auth.dto;
 
 import lombok.Builder;
 import lombok.Data;

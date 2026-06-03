@@ -11,7 +11,7 @@ import com.justen.auth.domain.model.RefreshToken;
 import com.justen.auth.domain.model.User;
 import com.justen.auth.domain.repository.OAuthClientRepository;
 import com.justen.auth.domain.repository.UserRepository;
-import com.justen.auth.dtos.AuthResponseDto;
+import com.justen.auth.dto.AuthResponseDto;
 import com.justen.infrastructure.AppProperties;
 
 import lombok.AllArgsConstructor;

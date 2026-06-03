@@ -18,7 +18,7 @@ import com.justen.auth.domain.enums.RoleEnum;
 import com.justen.auth.domain.exception.EntityNotFoundException;
 import com.justen.auth.domain.model.User;
 import com.justen.auth.domain.repository.UserRepository;
-import com.justen.auth.dtos.UserDto;
+import com.justen.auth.dto.UserDto;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;

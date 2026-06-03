@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.justen.auth.domain.model.dto.input.UserAuthInputDto;
 import com.justen.auth.domain.service.AuthService;
-import com.justen.auth.dtos.AuthResponseDto;
+import com.justen.auth.dto.AuthResponseDto;
+import com.justen.auth.dto.input.UserAuthInputDto;
 
 import lombok.AllArgsConstructor;
 
