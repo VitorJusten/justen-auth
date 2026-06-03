@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.GetMapping;
  *
  */
 @Controller
-public class AuthenticationController {
+public class AuthViewController {
 
 	@GetMapping("/login")
 	public String login() {
-		return "login";
+		return "auth/login";
 	}
-
 }

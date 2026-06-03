@@ -13,9 +13,9 @@ import org.springframework.stereotype.Repository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.justen.auth.core.utils.DateUtils;
-import com.justen.auth.domain.model.dto.RoleDto;
-import com.justen.auth.domain.model.dto.UserDto;
 import com.justen.auth.domain.repository.custom.UserRepositoryCustom;
+import com.justen.auth.dtos.RoleDto;
+import com.justen.auth.dtos.UserDto;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

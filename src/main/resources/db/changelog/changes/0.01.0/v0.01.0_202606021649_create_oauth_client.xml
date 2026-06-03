@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+	<changeSet id="v0.01.0_oauth_client" author="Vitor Justen" >
+		<comment>Create oauth_client table</comment>
+		<sql>
+			<![CDATA[
+				CREATE TABLE oauth_client (
+				  clnt_cd_id UUID PRIMARY KEY,
+				  clnt_tx_client_id TEXT UNIQUE NOT NULL,
+				  clnt_tx_client_secret TEXT NOT NULL,
+				  clnt_tx_scopes TEXT NOT NULL,
+				  clnt_tx_authorized_grant_types TEXT NOT NULL,
+				  clnt_nm_active BOOLEAN NOT NULL DEFAULT TRUE
+				);
+
+				INSERT INTO oauth_client (clnt_cd_id, clnt_tx_client_id, clnt_tx_client_secret, clnt_tx_scopes, clnt_tx_authorized_grant_types)
+				VALUES (
+					'1f3e4d5c-6b7a-8f9e-0d1c-2b3a4f5e6d7c',
+					'justen-frontend-client',
+					'$2a$10$NajkeQpQPQaAmOiHPBalAOvaRDWwXWV4JYdglRsSLhp9Aevgl6wHa',
+					'read,write',
+					'password,refresh_token'
+				),
+				(
+					'2f3e4d5c-6b7a-8f9e-0d1c-2b3a4f5e6d7c',
+					'justen-mobile-client',
+					'$2a$10$NajkeQpQPQaAmOiHPBalAOvaRDWwXWV4JYdglRsSLhp9Aevgl6wHa',
+					'read,write',
+					'password,refresh_token'
+				),
+				(
+					'3f3e4d5c-6b7a-8f9e-0d1c-2b3a4f5e6d7c',
+					'justen-backend-client',
+					'$2a$10$NajkeQpQPQaAmOiHPBalAOvaRDWwXWV4JYdglRsSLhp9Aevgl6wHa',
+					'read,write',
+					'client_credentials'
+				);
+			]]>
+		</sql>
+	</changeSet>	
+	
+</databaseChangeLog>

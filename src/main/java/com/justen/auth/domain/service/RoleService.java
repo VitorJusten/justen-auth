@@ -29,7 +29,7 @@ public class RoleService {
 	private final SecurityUtils securityUtils;
 
 	public List<Role> getAllRoles() {
-		securityUtils.validateRoles(List.of(RoleEnum.ADM.getName(), RoleEnum.DEV.getName()));
+		securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
 		return roleRepository.findAll();
 	}
 
@@ -39,13 +39,13 @@ public class RoleService {
 
 	@Transactional
 	public Role createRole(Role role) {
-		securityUtils.validateRoles(List.of(RoleEnum.ADM.getName(), RoleEnum.DEV.getName()));
+		securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
 		return roleRepository.save(role);
 	}
 
 	@Transactional
 	public Role updateRole(UUID id, Role role) {
-		securityUtils.validateRoles(List.of(RoleEnum.ADM.getName(), RoleEnum.DEV.getName()));
+		securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
 		Role existing = getRoleById(id);
 
 		BeanUtils.copyProperties(role, existing, "id");
@@ -55,7 +55,7 @@ public class RoleService {
 
 	@Transactional
 	public void deleteRole(UUID id) {
-		securityUtils.validateRoles(List.of(RoleEnum.ADM.getName(), RoleEnum.DEV.getName()));
+		securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
 		roleRepository.deleteById(id);
 	}
 

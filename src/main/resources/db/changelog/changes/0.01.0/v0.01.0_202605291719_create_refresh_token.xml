@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+	<changeSet id="v0.01.0" author="Vitor Justen" >
+		<comment>First tables</comment>
+		<sql>
+			<![CDATA[
+			
+				CREATE TABLE refresh_token (
+				  rt_cd_id UUID PRIMARY KEY,
+				  usac_cd_id UUID NOT NULL,
+				  rt_tx_token TEXT NOT NULL,
+				  rt_dt_expiration TIMESTAMP NOT NULL,
+				  rt_nm_revoked BOOLEAN DEFAULT FALSE
+				);
+			
+			]]>
+		</sql>
+		<rollback>
+
+		</rollback>
+	</changeSet>	
+	
+</databaseChangeLog>

@@ -391,7 +391,7 @@
 
                 const token = document.querySelector('#signup-form input[name="_csrf"]').value
 
-                const response = await fetch("/user", {
+                const response = await fetch("/self/signup", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

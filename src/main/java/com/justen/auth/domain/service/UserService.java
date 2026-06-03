@@ -17,8 +17,8 @@ import com.justen.auth.core.utils.SecurityUtils;
 import com.justen.auth.domain.enums.RoleEnum;
 import com.justen.auth.domain.exception.EntityNotFoundException;
 import com.justen.auth.domain.model.User;
-import com.justen.auth.domain.model.dto.UserDto;
 import com.justen.auth.domain.repository.UserRepository;
+import com.justen.auth.dtos.UserDto;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -42,14 +42,14 @@ public class UserService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
 		User user = userRepository.findByUsername(username)
-				.orElseThrow(() -> new EntityNotFoundException("userNotFound"));
+				.orElseThrow(() -> new UsernameNotFoundException("userNotFound"));
 
 		return user;
 	}
 
 	public Page<UserDto> getAll(Pageable pageable, String filter, String id, String username, String role,
 			Boolean accountLocked, String createdAt, String lastLoginAt, String lockUntil, String updatedAt) {
-		securityUtils.validateRoles(List.of(RoleEnum.ADM.getName(), RoleEnum.DEV.getName()));
+		securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
 
 		return userRepository.getAll(pageable, filter, id, username, role, accountLocked, createdAt, lastLoginAt,
 				lockUntil, updatedAt);
@@ -71,8 +71,8 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public User update(UUID id, User user) {
-		if (!securityUtils.getLoggedUserId().equals(id.toString())) {
-			securityUtils.validateRoles(List.of(RoleEnum.ADM.getName(), RoleEnum.DEV.getName()));
+		if (!securityUtils.getLoggedUserId().toString().equals(id.toString())) {
+			securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
 		}
 
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -86,16 +86,16 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public void delete(UUID id) {
-		if (!securityUtils.getLoggedUserId().equals(id.toString())) {
-			securityUtils.validateRoles(List.of(RoleEnum.ADM.getName(), RoleEnum.DEV.getName()));
+		if (!securityUtils.getLoggedUserId().toString().equals(id.toString())) {
+			securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
 		}
 		userRepository.deleteById(id);
 	}
 
 	@Transactional
 	public void updatePassword(UUID id, String newPassword) {
-		if (!securityUtils.getLoggedUserId().equals(id.toString())) {
-			securityUtils.validateRoles(List.of(RoleEnum.ADM.getName(), RoleEnum.DEV.getName()));
+		if (!securityUtils.getLoggedUserId().toString().equals(id.toString())) {
+			securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
 		}
 		User user = getById(id);
 		user.setPassword(passwordEncoder.encode(newPassword));
@@ -104,8 +104,8 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public void disableUser(UUID id, OffsetDateTime until) {
-		if (!securityUtils.getLoggedUserId().equals(id.toString())) {
-			securityUtils.validateRoles(List.of(RoleEnum.ADM.getName(), RoleEnum.DEV.getName()));
+		if (!securityUtils.getLoggedUserId().toString().equals(id.toString())) {
+			securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
 		}
 
 		User user = getById(id);
@@ -118,8 +118,8 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public void enableUser(UUID id) {
-		if (!securityUtils.getLoggedUserId().equals(id.toString())) {
-			securityUtils.validateRoles(List.of(RoleEnum.ADM.getName(), RoleEnum.DEV.getName()));
+		if (!securityUtils.getLoggedUserId().toString().equals(id.toString())) {
+			securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
 		}
 
 		User user = getById(id);

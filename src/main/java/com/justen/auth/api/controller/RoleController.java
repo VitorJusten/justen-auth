@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.justen.auth.domain.model.dto.RoleDto;
 import com.justen.auth.domain.model.dto.input.RoleInputDto;
 import com.justen.auth.domain.service.RoleService;
+import com.justen.auth.dtos.RoleDto;
 
 import lombok.AllArgsConstructor;
 

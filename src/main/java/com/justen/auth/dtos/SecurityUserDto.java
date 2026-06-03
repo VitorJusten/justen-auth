@@ -1,4 +1,4 @@
-package com.justen.auth.domain.model.dto;
+package com.justen.auth.dtos;
 
 import java.util.Collection;
 

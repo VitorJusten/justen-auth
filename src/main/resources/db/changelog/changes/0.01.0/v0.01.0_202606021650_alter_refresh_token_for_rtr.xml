@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+	<changeSet id="v0.01.0_alter_refresh_token" author="Vitor Justen" >
+		<comment>Alter refresh_token for RTR and client relation</comment>
+		<sql>
+			<![CDATA[
+				ALTER TABLE refresh_token ADD COLUMN clnt_cd_id UUID;
+				ALTER TABLE refresh_token ADD CONSTRAINT fk_refresh_token_client FOREIGN KEY (clnt_cd_id) REFERENCES oauth_client(clnt_cd_id) ON DELETE CASCADE;
+				
+				ALTER TABLE refresh_token ADD COLUMN rt_tx_replaced_by TEXT;
+			]]>
+		</sql>
+	</changeSet>	
+	
+</databaseChangeLog>
