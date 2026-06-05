@@ -48,10 +48,10 @@ public class AuthService {
         }
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("invalid credentials"));
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("invalid credentials");
+            throw new RuntimeException("Invalid credentials");
         }
 
         if (!user.isEnabled()) {

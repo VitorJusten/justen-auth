@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.justen.auth.core.utils.SecurityUtils;
 import com.justen.auth.domain.enums.RoleEnum;
+import com.justen.auth.domain.exception.EntityNotFoundException;
 import com.justen.auth.domain.model.Role;
 import com.justen.auth.domain.repository.RoleRepository;
 
@@ -34,7 +35,7 @@ public class RoleService {
 	}
 
 	public Role getRoleById(UUID id) {
-		return roleRepository.findById(id).orElseThrow(() -> new RuntimeException("Role not found"));
+		return roleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Role not found"));
 	}
 
 	@Transactional

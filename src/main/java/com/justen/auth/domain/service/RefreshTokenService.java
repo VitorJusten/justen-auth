@@ -47,11 +47,12 @@ public class RefreshTokenService {
 
     public RefreshToken rotate(String oldTokenString) {
         RefreshToken oldToken = refreshTokenRepository.findByToken(oldTokenString)
-            .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
+                .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
 
         if (Boolean.TRUE.equals(oldToken.getRevoked())) {
             revokeAllUserTokens(oldToken.getUserId());
-            throw new RuntimeException("Refresh token was revoked. Token theft detected. All user sessions invalidated.");
+            throw new RuntimeException(
+                    "Refresh token was revoked. Token theft detected. All user sessions invalidated.");
         }
 
         if (oldToken.getExpiration().isBefore(OffsetDateTime.now())) {
@@ -66,10 +67,10 @@ public class RefreshTokenService {
         newToken.setToken(UUID.randomUUID().toString());
         newToken.setExpiration(OffsetDateTime.now().plusSeconds(appProperties.getRefreshExpiration()));
         newToken.setRevoked(false);
-        
+
         oldToken.setReplacedBy(newToken.getToken());
         refreshTokenRepository.save(oldToken);
-        
+
         return refreshTokenRepository.save(newToken);
     }
 

@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Component;
 
 import com.justen.auth.domain.enums.RoleEnum;
+import com.justen.auth.domain.exception.BusinessException;
 
 import lombok.AllArgsConstructor;
 
@@ -53,7 +54,7 @@ public class SecurityUtils {
 		List<String> userRoles = getLoggedUserRoles();
 		boolean ok = roles.stream().map(RoleEnum::getName).anyMatch(userRoles::contains);
 		if (!ok) {
-			throw new RuntimeException("forbidden");
+			throw new BusinessException("You do not have permission to perform this action");
 		}
 	}
 }
