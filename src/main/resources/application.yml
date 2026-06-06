@@ -2,7 +2,6 @@ server:
   port: ${SERVER_PORT:8081}
 
 spring:
-
   application:
     name: justen-auth
 
@@ -20,3 +19,9 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: ${JPA_SHOW_SQL:false}
+
+auth:
+  expiration: 900
+  refresh-expiration: 604800
+  issuer: justen-auth
+  audience: justen-api

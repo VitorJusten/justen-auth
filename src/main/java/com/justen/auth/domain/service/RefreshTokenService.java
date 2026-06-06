@@ -34,7 +34,7 @@ public class RefreshTokenService {
         token.setUserId(user.getId());
         token.setClientId(client.getId());
         token.setToken(UUID.randomUUID().toString());
-        token.setExpiration(OffsetDateTime.now().plusSeconds(appProperties.getRefreshExpiration()));
+        token.setExpiration(OffsetDateTime.now().plusSeconds(appProperties.getAuth().getRefreshExpiration()));
         token.setRevoked(false);
         return refreshTokenRepository.save(token);
     }
@@ -65,7 +65,7 @@ public class RefreshTokenService {
         newToken.setUserId(oldToken.getUserId());
         newToken.setClientId(oldToken.getClientId());
         newToken.setToken(UUID.randomUUID().toString());
-        newToken.setExpiration(OffsetDateTime.now().plusSeconds(appProperties.getRefreshExpiration()));
+        newToken.setExpiration(OffsetDateTime.now().plusSeconds(appProperties.getAuth().getRefreshExpiration()));
         newToken.setRevoked(false);
 
         oldToken.setReplacedBy(newToken.getToken());

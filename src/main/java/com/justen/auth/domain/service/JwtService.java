@@ -37,10 +37,10 @@ public class JwtService {
                 .collect(Collectors.toList());
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer(appProperties.getIssuer())
-                .audience(List.of(appProperties.getAudience()))
+                .issuer(appProperties.getAuth().getIssuer())
+                .audience(List.of(appProperties.getAuth().getAudience()))
                 .issuedAt(now)
-                .expiresAt(now.plusSeconds(appProperties.getExpiration()))
+                .expiresAt(now.plusSeconds(appProperties.getAuth().getExpiration()))
                 .subject(user.getId().toString())
                 .claim("username", user.getUsername())
                 .claim("roles", roles)

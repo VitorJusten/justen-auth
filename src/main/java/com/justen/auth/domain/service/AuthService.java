@@ -66,7 +66,7 @@ public class AuthService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken.getToken())
                 .tokenType("Bearer")
-                .expiresIn(appProperties.getExpiration())
+                .expiresIn(appProperties.getAuth().getExpiration())
                 .build();
     }
 
@@ -86,7 +86,7 @@ public class AuthService {
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken.getToken())
                 .tokenType("Bearer")
-                .expiresIn(appProperties.getExpiration())
+                .expiresIn(appProperties.getAuth().getExpiration())
                 .build();
     }
 }
