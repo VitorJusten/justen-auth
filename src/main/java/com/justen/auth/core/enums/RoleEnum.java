@@ -1,4 +1,4 @@
-package com.justen.auth.domain.enums;
+package com.justen.auth.core.enums;
 
 import java.util.UUID;
 

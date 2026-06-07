@@ -13,12 +13,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.justen.auth.core.dto.UserDto;
+import com.justen.auth.core.enums.RoleEnum;
 import com.justen.auth.core.utils.SecurityUtils;
-import com.justen.auth.domain.enums.RoleEnum;
 import com.justen.auth.domain.exception.EntityNotFoundException;
 import com.justen.auth.domain.model.User;
 import com.justen.auth.domain.repository.UserRepository;
-import com.justen.auth.dto.UserDto;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;

@@ -10,7 +10,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
-import com.justen.auth.domain.enums.RoleEnum;
+import com.justen.auth.core.enums.RoleEnum;
 import com.justen.auth.domain.exception.BusinessException;
 
 import lombok.AllArgsConstructor;

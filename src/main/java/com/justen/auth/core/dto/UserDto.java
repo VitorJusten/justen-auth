@@ -1,4 +1,4 @@
-package com.justen.auth.dto;
+package com.justen.auth.core.dto;
 
 import java.time.OffsetDateTime;
 import java.util.List;

@@ -6,8 +6,8 @@ import java.util.UUID;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import com.justen.auth.core.enums.RoleEnum;
 import com.justen.auth.core.utils.SecurityUtils;
-import com.justen.auth.domain.enums.RoleEnum;
 import com.justen.auth.domain.exception.EntityNotFoundException;
 import com.justen.auth.domain.model.Role;
 import com.justen.auth.domain.repository.RoleRepository;

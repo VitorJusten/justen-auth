@@ -1,9 +1,5 @@
-package com.justen.auth.dto.input;
+package com.justen.auth.core.dto.input;
 
-import java.util.List;
-import java.util.UUID;
-
-import com.justen.auth.domain.model.Role;
 import com.justen.auth.domain.model.User;
 
 import jakarta.validation.constraints.NotBlank;
@@ -17,30 +13,23 @@ import lombok.Data;
  *
  */
 @Data
-public class UserInputDto {
+public class UserAuthInputDto {
+
 
 	@NotBlank
 	private String username;
 	@NotBlank
 	private String password;
-	private List<UUID> roleIds;
-
+	
 	public User toEntity() {
 
 		User user = new User();
 
 		user.setUsername(username);
 		user.setPassword(password);
+		user.setRoles(null);
 		
-		if (roleIds != null && !roleIds.isEmpty()) {
-			roleIds.forEach(id -> {
-				Role role = new Role();
-				role.setId(id);
-				user.getRoles().add(role);
-			});
-		}
-
 		return user;
 	}
-
+	
 }
