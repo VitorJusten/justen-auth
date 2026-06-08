@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.justen.auth.core.enums.CredentialTypeEnum;
 import com.justen.auth.domain.model.UserCredential;
 
 /**
@@ -26,10 +27,26 @@ public interface UserCredentialRepository extends JpaRepository<UserCredential, 
 	 */
 	@Query("""
 			    SELECT uc
-			    FROM UserCredentials uc
+			    FROM UserCredential uc
 			    WHERE uc.user.id = :userId
 			""")
 	List<UserCredential> findByUserId(@Param("userId") UUID userId);
+
+	/**
+	 * 
+	 * @param userId
+	 * @param credentialType
+	 * @return
+	 */
+	@Query("""
+			    SELECT uc
+			    FROM UserCredential uc
+			    WHERE uc.user.id = :userId
+			    AND uc.credentialType = :credentialType
+			""")
+	Optional<UserCredential> findByUserIdAndCredentialType(
+			@Param("userId") UUID userId,
+			@Param("credentialType") CredentialTypeEnum credentialType);
 	
 	/**
 	 * 
@@ -38,7 +55,7 @@ public interface UserCredentialRepository extends JpaRepository<UserCredential, 
 	 */
 	@Query("""
 		    SELECT uc
-		    FROM UserCredentials uc
+		    FROM UserCredential uc
 		    WHERE uc.credential = :credential
 		""")
 		Optional<UserCredential> findByCredential(
