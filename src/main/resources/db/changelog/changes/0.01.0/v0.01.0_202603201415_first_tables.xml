@@ -6,37 +6,84 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-	<changeSet id="v0.01.0" author="Vitor Justen" >
+	<changeSet id="v0.01.0" author="Vitor Justen">
 		<comment>First tables</comment>
+
 		<sql>
 			<![CDATA[
 			
 				CREATE TABLE IF NOT EXISTS role(
 					role_cd_id UUID PRIMARY KEY,
-					role_tx_name TEXT UNIQUE NOT NULL
+					role_tx_name TEXT NOT NULL UNIQUE
 				);
-			
-				INSERT INTO role(role_cd_id, role_tx_name) VALUES
-				('0a5982c8-baa4-4e66-8614-01cf35ad4cfc', 'DEV'),
-				('0b5982c8-baa4-4e66-8614-01cf35ad4cfc', 'ADM');
-			
+
 				CREATE TABLE IF NOT EXISTS user_account(
 					usac_cd_id UUID PRIMARY KEY,
-					usac_tx_username TEXT UNIQUE NOT NULL,
+					usac_tx_username TEXT NOT NULL,
 					usac_tx_password TEXT NOT NULL,
 					usac_nm_account_locked BOOLEAN NOT NULL DEFAULT FALSE,
-					usac_nm_failed_login_attempts INTEGER DEFAULT 0,
+					usac_nm_failed_login_attempts INTEGER NOT NULL DEFAULT 0,
 					usac_dt_lock_until TIMESTAMP,
 					usac_dt_last_login_at TIMESTAMP,
 					usac_dt_created_at TIMESTAMP NOT NULL,
 					usac_dt_updated_at TIMESTAMP
 				);
-				
-				CREATE TABLE user_role (
-				  usac_cd_id UUID NOT NULL REFERENCES user_account(usac_cd_id) ON UPDATE NO ACTION ON DELETE CASCADE,
-				  role_cd_id UUID NOT NULL REFERENCES role(role_cd_id) ON UPDATE NO ACTION ON DELETE CASCADE
+
+				CREATE TABLE IF NOT EXISTS user_credentials(
+					uscr_cd_id UUID PRIMARY KEY,
+
+					usac_cd_id UUID NOT NULL,
+
+					uscr_tx_credential TEXT UNIQUE NOT NULL,
+
+					uscr_tx_credential_type VARCHAR(50) NOT NULL,
+
+					CONSTRAINT fk_user_credentials_user
+						FOREIGN KEY (usac_cd_id)
+						REFERENCES user_account(usac_cd_id)
+						ON DELETE CASCADE
 				);
-				
+
+				CREATE TABLE IF NOT EXISTS user_role(
+					usac_cd_id UUID NOT NULL,
+					role_cd_id UUID NOT NULL,
+
+					CONSTRAINT fk_user_role_user
+						FOREIGN KEY (usac_cd_id)
+						REFERENCES user_account(usac_cd_id)
+						ON DELETE CASCADE,
+
+					CONSTRAINT fk_user_role_role
+						FOREIGN KEY (role_cd_id)
+						REFERENCES role(role_cd_id)
+						ON DELETE CASCADE,
+
+					PRIMARY KEY(usac_cd_id, role_cd_id)
+				);
+
+				CREATE UNIQUE INDEX IF NOT EXISTS ux_role_name
+					ON role(role_tx_name);
+
+				CREATE UNIQUE INDEX IF NOT EXISTS ux_user_credentials_type_value
+					ON user_credentials(
+						uscr_tx_credential_type,
+						uscr_tx_credential
+					);
+
+				CREATE INDEX IF NOT EXISTS ix_user_credentials_user
+					ON user_credentials(usac_cd_id);
+
+				CREATE INDEX IF NOT EXISTS ix_user_role_user
+					ON user_role(usac_cd_id);
+
+				CREATE INDEX IF NOT EXISTS ix_user_role_role
+					ON user_role(role_cd_id);
+
+				INSERT INTO role(role_cd_id, role_tx_name)
+				VALUES
+				('0a5982c8-baa4-4e66-8614-01cf35ad4cfc', 'DEV'),
+				('0b5982c8-baa4-4e66-8614-01cf35ad4cfc', 'ADM');
+
 				INSERT INTO user_account(
 					usac_cd_id,
 					usac_tx_username,
@@ -44,24 +91,40 @@
 					usac_nm_account_locked,
 					usac_nm_failed_login_attempts,
 					usac_dt_created_at
-				) VALUES (
+				)
+				VALUES(
 					'3e2f4c57-1f72-4f59-9f89-54f7a8a8c5c1',
-					'1',
-					'$2a$10$13wqs4kATCKCxAX4TzLhCuvfJ4PzpCn4IYL6suEqTVwCTLzw6eMEG',
+					'dev_justen',
+					'$2a$12$c4gu0NaN81tMM/Fibs82cOxIqy3k3GzySz6IjsmOyiSYsXJVSfm2u',
 					FALSE,
 					0,
 					NOW()
 				);
-				
-				INSERT INTO user_role (usac_cd_id, role_cd_id) VALUES
-					('3e2f4c57-1f72-4f59-9f89-54f7a8a8c5c1', '0a5982c8-baa4-4e66-8614-01cf35ad4cfc'),
-					('3e2f4c57-1f72-4f59-9f89-54f7a8a8c5c1', '0b5982c8-baa4-4e66-8614-01cf35ad4cfc');
-			
+
+				INSERT INTO user_role(
+					usac_cd_id,
+					role_cd_id
+				)
+				VALUES
+				(
+					'3e2f4c57-1f72-4f59-9f89-54f7a8a8c5c1',
+					'0a5982c8-baa4-4e66-8614-01cf35ad4cfc'
+				),
+				(
+					'3e2f4c57-1f72-4f59-9f89-54f7a8a8c5c1',
+					'0b5982c8-baa4-4e66-8614-01cf35ad4cfc'
+				);
+
 			]]>
 		</sql>
-		<rollback>
 
+		<rollback>
+			DROP TABLE IF EXISTS user_role;
+			DROP TABLE IF EXISTS user_credentials;
+			DROP TABLE IF EXISTS user_account;
+			DROP TABLE IF EXISTS role;
 		</rollback>
-	</changeSet>	
-	
+
+	</changeSet>
+
 </databaseChangeLog>

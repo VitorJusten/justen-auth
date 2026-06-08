@@ -26,4 +26,18 @@ public interface UserRepository extends JpaRepository<User, UUID>, UserRepositor
 			""", nativeQuery = true)
 	Optional<User> findByUsername(@Param(value = "username") String username);
 
+	/**
+	 * 
+	 * @param credential
+	 * @return
+	 */
+	@Query(value = """
+		    SELECT u.*
+		    FROM user_account u
+		    JOIN user_credential uc ON uc.usac_cd_id = u.usac_cd_id
+		    WHERE u.usac_tx_username = :credential 
+		    OR uc.uscr_tx_credential = :credential
+		""", nativeQuery = true)
+	Optional<User> findByCredential(@Param(value = "credential") String credential);
+
 }

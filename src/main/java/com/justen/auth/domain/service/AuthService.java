@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.justen.auth.core.dto.AuthResponseDto;
+import com.justen.auth.domain.exception.BusinessException;
 import com.justen.auth.domain.model.OAuthClient;
 import com.justen.auth.domain.model.RefreshToken;
 import com.justen.auth.domain.model.User;
@@ -34,28 +35,28 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final AppProperties appProperties;
 
-    public AuthResponseDto login(String username, String password, String clientId, String clientSecret) {
+    public AuthResponseDto login(String credential, String password, String clientId, String clientSecret) {
 
         OAuthClient client = oAuthClientRepository.findByClientId(clientId)
-                .orElseThrow(() -> new RuntimeException("Invalid client"));
+                .orElseThrow(() -> new BusinessException("Invalid client"));
 
         if (!passwordEncoder.matches(clientSecret, client.getClientSecret())) {
-            throw new RuntimeException("Invalid client credentials");
+            throw new BusinessException("Invalid client credentials");
         }
 
         if (!client.getActive()) {
-            throw new RuntimeException("Client is inactive");
+            throw new BusinessException("Client is inactive");
         }
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+        User user = userRepository.findByCredential(credential)
+               .orElseThrow(() -> new BusinessException("Invalid credentials"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new BusinessException("Invalid credentials");
         }
 
         if (!user.isEnabled()) {
-            throw new RuntimeException("User account is locked or disabled");
+            throw new BusinessException("User account is locked or disabled");
         }
 
         List<String> scopes = Arrays.asList(client.getScopes().split(","));
@@ -74,10 +75,10 @@ public class AuthService {
         RefreshToken newRefreshToken = refreshTokenService.rotate(refreshTokenValue);
         
         User user = userRepository.findById(newRefreshToken.getUserId())
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new BusinessException("User not found"));
             
         OAuthClient client = oAuthClientRepository.findById(newRefreshToken.getClientId())
-            .orElseThrow(() -> new RuntimeException("Client not found"));
+            .orElseThrow(() -> new BusinessException("Client not found"));
 
         List<String> scopes = Arrays.asList(client.getScopes().split(","));
         String newAccessToken = jwtService.generateAccessToken(user, client.getClientId(), scopes);
