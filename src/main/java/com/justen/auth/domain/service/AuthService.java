@@ -36,7 +36,7 @@ public class AuthService {
     private final AppProperties appProperties;
 
     public AuthResponseDto login(String credential, String password, String clientId, String clientSecret) {
-
+    	
         OAuthClient client = oAuthClientRepository.findByClientId(clientId)
                 .orElseThrow(() -> new BusinessException("Invalid client"));
 

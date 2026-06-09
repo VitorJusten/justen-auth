@@ -12,8 +12,6 @@ import org.springframework.stereotype.Component;
 
 import com.justen.auth.core.enums.RoleEnum;
 import com.justen.auth.domain.exception.BusinessException;
-import com.justen.auth.domain.model.UserCredential;
-import com.justen.auth.domain.service.UserCredentialService;
 
 import lombok.AllArgsConstructor;
 
@@ -21,8 +19,6 @@ import lombok.AllArgsConstructor;
 @Component
 public class SecurityUtils {
 	
-	private final UserCredentialService credentialService;
-
 	public Authentication getAuthentication() {
 		return SecurityContextHolder.getContext().getAuthentication();
 	}
@@ -60,9 +56,5 @@ public class SecurityUtils {
 		if (!ok) {
 			throw new BusinessException("You do not have permission to perform this action");
 		}
-	}
-	
-	public List<UserCredential> getLoggedUserCredentials() {
-		return credentialService.findByUserId(getLoggedUserId());
 	}
 }

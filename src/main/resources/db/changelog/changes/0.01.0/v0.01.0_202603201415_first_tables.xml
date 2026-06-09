@@ -29,7 +29,7 @@
 					usac_dt_updated_at TIMESTAMP
 				);
 
-				CREATE TABLE IF NOT EXISTS user_credentials(
+				CREATE TABLE IF NOT EXISTS user_credential(
 					uscr_cd_id UUID PRIMARY KEY,
 
 					usac_cd_id UUID NOT NULL,
