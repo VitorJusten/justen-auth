@@ -18,7 +18,7 @@ public class BusinessException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
 	private List<Field> fields = new ArrayList<>();
-	
+
 	public BusinessException(String message, Throwable cause) {
 		super(message, cause);
 	}
@@ -37,11 +37,11 @@ public class BusinessException extends RuntimeException {
 		super("Invalid arguments.");
 		this.fields = fields;
 	}
-	
+
 	public List<Field> getFields() {
 		return this.fields;
 	}
-	
+
 	public boolean hasFields() {
 		return !this.fields.isEmpty();
 	}
@@ -49,8 +49,8 @@ public class BusinessException extends RuntimeException {
 	@Data
 	@AllArgsConstructor
 	public static class Field {
-        private String name;
-        private String message;
-    }
-	
+		private String name;
+		private String message;
+	}
+
 }

@@ -24,16 +24,16 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AuthController {
 
-	private final AuthService authService;
+    private final AuthService authService;
 
-	@PostMapping("/login")
-	public AuthResponseDto login(
+    @PostMapping("/login")
+    public AuthResponseDto login(
             @RequestBody UserAuthInputDto req,
             @RequestHeader(value = "X-Client-Id", required = false, defaultValue = "justen-frontend-client") String clientId,
             @RequestHeader(value = "X-Client-Secret", required = false, defaultValue = "justen-secret") String clientSecret) {
 
-		return authService.login(req.getUsername(), req.getPassword(), clientId, clientSecret);
-	}
+        return authService.login(req.getUsername(), req.getPassword(), clientId, clientSecret);
+    }
 
     @PostMapping("/refresh")
     public AuthResponseDto refresh(@RequestHeader("Refresh-Token") String refreshToken) {

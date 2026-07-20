@@ -10,14 +10,11 @@ The goal of this project is to provide a **ready-to-use authentication service**
 # Features
 
 * 🔐 Secure authentication with **Spring Security**
-* 🔑 **OAuth2 Authorization Server**
 * 🪪 **JWT token generation and validation**
-* 🧑‍💻 Custom **login interface using Thymeleaf**
 * 🗄️ **PostgreSQL database support**
 * 📦 Database migrations using **Liquibase**
 * 📧 Optional **2FA via email**
 * 📊 **Actuator monitoring and observability**
-* 📚 **Swagger / OpenAPI documentation**
 * ✅ Input validation with **Bean Validation**
 * ⚡ Development support with **Spring DevTools**
 
@@ -32,10 +29,8 @@ The goal of this project is to provide a **ready-to-use authentication service**
 * **Spring Data JPA**
 * **PostgreSQL**
 * **Liquibase**
-* **Thymeleaf**
 * **Spring Mail**
 * **Spring Actuator**
-* **Swagger / OpenAPI**
 * **Lombok**
 * **Apache HttpClient 5**
 

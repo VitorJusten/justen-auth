@@ -16,6 +16,6 @@ public enum CredentialTypeEnum {
 	EMAIL(".*"),
 	PHONE(".*"),
 	STEAMID("^[0-9]{17}$");
-	
+
 	private String regexFromat;
 }

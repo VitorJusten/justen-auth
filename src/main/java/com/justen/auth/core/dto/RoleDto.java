@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class RoleDto {
-	
+
 	@NotBlank
 	private UUID id;
 	@NotBlank
@@ -28,5 +28,5 @@ public class RoleDto {
 		this.id = role.getId();
 		this.name = role.getName();
 	}
-	
+
 }

@@ -22,13 +22,13 @@ import lombok.Data;
 public class Error {
 
 	private Integer status;
-	
+
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	private OffsetDateTime dateTime;
-	
+
 	private String title;
 	private List<Field> fields;
-	
+
 	@Data
 	@AllArgsConstructor
 	public static class Field {

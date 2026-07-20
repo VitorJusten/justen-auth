@@ -16,10 +16,13 @@ import org.springframework.stereotype.Service;
 import com.justen.auth.core.dto.UserDto;
 import com.justen.auth.core.enums.RoleEnum;
 import com.justen.auth.core.utils.SecurityUtils;
+import com.justen.auth.domain.exception.BusinessException;
 import com.justen.auth.domain.exception.EntityNotFoundException;
 import com.justen.auth.domain.model.User;
 import com.justen.auth.domain.repository.UserRepository;
+import com.justen.infrastructure.AppProperties;
 
+import io.micrometer.common.util.StringUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
@@ -37,6 +40,7 @@ public class UserService implements UserDetailsService {
 	private final PasswordEncoder passwordEncoder;
 	private final UserRepository userRepository;
 	private final SecurityUtils securityUtils;
+	private final AppProperties appProperties;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -65,7 +69,7 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public User create(User user) {
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		user.setPassword(passwordEncoder.encode(user.getPassword() != null ? user.getPassword() : appProperties.getAuth().getDefaultPassword()));
 		return userRepository.save(user);
 	}
 
@@ -75,11 +79,13 @@ public class UserService implements UserDetailsService {
 			securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
 		}
 
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
-
 		User existing = getById(id);
+		
+		if(StringUtils.isNotBlank(user.getPassword())) {
+			existing.setPassword(passwordEncoder.encode(user.getPassword()));
+		}
 
-		BeanUtils.copyProperties(user, existing, "id", "createdAt");
+		BeanUtils.copyProperties(user, existing, "id", "createdAt", "password");
 
 		return userRepository.save(existing);
 	}
@@ -93,13 +99,28 @@ public class UserService implements UserDetailsService {
 	}
 
 	@Transactional
-	public void updatePassword(UUID id, String newPassword) {
-		if (!securityUtils.getLoggedUserId().toString().equals(id.toString())) {
+	public void resetPassword(UUID id) {
+		 String newPassword = appProperties.getAuth().getDefaultPassword();
+		if (id != null && !securityUtils.getLoggedUserId().toString().equals(id.toString())) {
 			securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
+		} else if(id == null) {
+			id = securityUtils.getLoggedUserId();
 		}
 		User user = getById(id);
 		user.setPassword(passwordEncoder.encode(newPassword));
 		userRepository.save(user);
+	}
+	
+	@Transactional
+	public void updatePassword(String oldPassword, String newPassword) {
+	    User user = getById(securityUtils.getLoggedUserId());
+
+	    if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+	        user.setPassword(passwordEncoder.encode(newPassword));
+	        userRepository.save(user);
+	    } else {
+	        throw new BusinessException("Actual password is incorrect");
+	    }
 	}
 
 	@Transactional

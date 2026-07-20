@@ -1,10 +1,12 @@
 package com.justen.auth.api.controller;
 
+import java.net.http.HttpHeaders;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,12 +38,12 @@ import lombok.AllArgsConstructor;
 public class UserController {
 
 	private final UserService service;
-	
+
 	@PostMapping("/signup")
 	public UserDto signUp(@RequestBody UserAuthInputDto model) {
 		return new UserDto(service.create(model.toEntity()));
 	}
-	
+
 	@PostMapping("/create")
 	public UserDto create(@RequestBody UserInputDto model) {
 		return new UserDto(service.create(model.toEntity()));
@@ -49,7 +51,7 @@ public class UserController {
 
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable UUID id) {
-		service.delete(id);
+	    service.delete(id);
 	}
 
 	@PutMapping("/{id}")
@@ -93,9 +95,14 @@ public class UserController {
 				updatedAt);
 	}
 
-	@PatchMapping("/{id}/password")
-	public void updatePassword(@PathVariable UUID id, @RequestParam String password) {
-		service.updatePassword(id, password);
+	@PatchMapping("/update-password")
+	public void updatePassword(@RequestParam String oldPassword,@RequestParam String newPassword) {
+		service.updatePassword(oldPassword, newPassword);
+	}
+
+	@PostMapping("/{id}/reset-password")
+	public void resetPassword(@PathVariable UUID id) {
+		service.resetPassword(id);
 	}
 
 	@PatchMapping("/{id}/lock")

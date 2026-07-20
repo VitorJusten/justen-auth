@@ -32,5 +32,5 @@ public class DateUtils {
 		}
 		return OffsetDateTime.parse(value.toString());
 	}
-	
+
 }

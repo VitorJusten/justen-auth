@@ -25,3 +25,4 @@ auth:
   refresh-expiration: 604800
   issuer: justen-auth
   audience: justen-api
+  defaultPassword: justen@123

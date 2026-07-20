@@ -15,9 +15,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityUserDto implements UserDetails {
 
-	private static final long serialVersionUID = 1L;
-	
-	private final User user;
+    private static final long serialVersionUID = 1L;
+
+    private final User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

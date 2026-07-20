@@ -36,7 +36,7 @@ public class AuthService {
     private final AppProperties appProperties;
 
     public AuthResponseDto login(String credential, String password, String clientId, String clientSecret) {
-    	
+
         OAuthClient client = oAuthClientRepository.findByClientId(clientId)
                 .orElseThrow(() -> new BusinessException("Invalid client"));
 
@@ -49,7 +49,7 @@ public class AuthService {
         }
 
         User user = userRepository.findByCredential(credential)
-               .orElseThrow(() -> new BusinessException("Invalid credentials"));
+                .orElseThrow(() -> new BusinessException("Invalid credentials"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BusinessException("Invalid credentials");
@@ -73,12 +73,12 @@ public class AuthService {
 
     public AuthResponseDto refresh(String refreshTokenValue) {
         RefreshToken newRefreshToken = refreshTokenService.rotate(refreshTokenValue);
-        
+
         User user = userRepository.findById(newRefreshToken.getUserId())
-            .orElseThrow(() -> new BusinessException("User not found"));
-            
+                .orElseThrow(() -> new BusinessException("User not found"));
+
         OAuthClient client = oAuthClientRepository.findById(newRefreshToken.getClientId())
-            .orElseThrow(() -> new BusinessException("Client not found"));
+                .orElseThrow(() -> new BusinessException("Client not found"));
 
         List<String> scopes = Arrays.asList(client.getScopes().split(","));
         String newAccessToken = jwtService.generateAccessToken(user, client.getClientId(), scopes);

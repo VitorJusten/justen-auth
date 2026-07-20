@@ -15,12 +15,11 @@ import lombok.Data;
 @Data
 public class UserAuthInputDto {
 
-
 	@NotBlank
 	private String username;
 	@NotBlank
 	private String password;
-	
+
 	public User toEntity() {
 
 		User user = new User();
@@ -28,8 +27,8 @@ public class UserAuthInputDto {
 		user.setUsername(username);
 		user.setPassword(password);
 		user.setRoles(null);
-		
+
 		return user;
 	}
-	
+
 }

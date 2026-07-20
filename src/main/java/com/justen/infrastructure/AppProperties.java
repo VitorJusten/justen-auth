@@ -70,5 +70,6 @@ public class AppProperties {
         private Long refreshExpiration;
         private String issuer;
         private String audience;
+        private String defaultPassword;
     }
 }
