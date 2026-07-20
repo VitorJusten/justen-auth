@@ -43,4 +43,5 @@ public class RefreshToken {
 
     @Column(name = "rt_tx_replaced_by")
     private String replacedBy;
+	
 }
