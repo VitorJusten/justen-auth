@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.justen.auth.core.enums.CredentialTypeEnum;
 import com.justen.auth.core.utils.SecurityUtils;
 import com.justen.auth.domain.exception.BusinessException;
+import com.justen.auth.domain.model.User;
 import com.justen.auth.domain.model.UserCredential;
 import com.justen.auth.domain.repository.UserCredentialRepository;
 
@@ -44,9 +45,8 @@ public class UserCredentialService {
 
 		if (credentials != null && !credentials.isEmpty()) {
 			for (UserCredential credential : credentials) {
-				boolean existsInParam = userCredentials.stream()
-						.anyMatch(paramCredential -> credential.getCredentialType()
-								.equals(paramCredential.getCredentialType()));
+				boolean existsInParam = userCredentials.stream().anyMatch(
+						paramCredential -> credential.getCredentialType().equals(paramCredential.getCredentialType()));
 
 				if (!existsInParam) {
 					repository.delete(credential);
@@ -66,7 +66,11 @@ public class UserCredentialService {
 			}
 
 			BeanUtils.copyProperties(paramCredential, credential, "id", "userId");
-			credential.setUserId(getUserIdReference(userId));
+
+			User user = new User();
+			user.setId(userId);
+
+			credential.setUser(user);
 
 			credentialsToSave.add(credential);
 		}
@@ -82,20 +86,14 @@ public class UserCredentialService {
 
 		for (UserCredential credential : userCredentials) {
 			if (!credentialTypes.add(credential.getCredentialType())) {
-				throw new BusinessException(
-						"Duplicate credential type found: " + credential.getCredentialType());
+				throw new BusinessException("Duplicate credential type found: " + credential.getCredentialType());
 			}
 		}
 	}
 
-	private UUID getUserIdReference(UUID userId) {
-		return userId;
-	}
-
 	@Transactional()
 	public UserCredential findById(UUID id) {
-		return repository.findById(id)
-				.orElseThrow(() -> new BusinessException("UserCredential not found: " + id));
+		return repository.findById(id).orElseThrow(() -> new BusinessException("UserCredential not found: " + id));
 	}
 
 	@Transactional()
@@ -114,8 +112,7 @@ public class UserCredentialService {
 	@Transactional(readOnly = true)
 	public UserCredential findByCredential(String credential) {
 		return repository.findByCredential(credential)
-				.orElseThrow(() -> new BusinessException(
-						"Credential not found: " + credential));
+				.orElseThrow(() -> new BusinessException("Credential not found: " + credential));
 	}
 
 }
