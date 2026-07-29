@@ -1,7 +1,6 @@
 package com.justen.auth.core.dto;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
