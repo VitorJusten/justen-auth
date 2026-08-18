@@ -10,8 +10,8 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
-import com.infrastructure.AppProperties;
 import com.justen.auth.domain.model.User;
+import com.justen.infrastructure.AppProperties;
 
 import lombok.AllArgsConstructor;
 

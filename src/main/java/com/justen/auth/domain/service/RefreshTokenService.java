@@ -6,11 +6,11 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.infrastructure.AppProperties;
 import com.justen.auth.domain.model.OAuthClient;
 import com.justen.auth.domain.model.RefreshToken;
 import com.justen.auth.domain.model.User;
 import com.justen.auth.domain.repository.RefreshTokenRepository;
+import com.justen.infrastructure.AppProperties;
 
 import lombok.AllArgsConstructor;
 

@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.infrastructure.AppProperties;
 import com.justen.auth.core.dto.UserDto;
 import com.justen.auth.core.enums.RoleEnum;
 import com.justen.auth.core.utils.SecurityUtils;
@@ -21,6 +20,7 @@ import com.justen.auth.domain.exception.BusinessException;
 import com.justen.auth.domain.exception.EntityNotFoundException;
 import com.justen.auth.domain.model.User;
 import com.justen.auth.domain.repository.UserRepository;
+import com.justen.infrastructure.AppProperties;
 
 import io.micrometer.common.util.StringUtils;
 import jakarta.transaction.Transactional;
