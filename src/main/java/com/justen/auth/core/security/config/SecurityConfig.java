@@ -15,6 +15,10 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.justen.infrastructure.AppProperties;
+
+import lombok.AllArgsConstructor;
+
 /**
  * 
  * @Author GitHub - VitorJusten
@@ -24,7 +28,10 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig {
+	
+	private final AppProperties properties;
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -62,7 +69,7 @@ public class SecurityConfig {
 	@Bean
 	org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
 		org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
-		configuration.setAllowedOrigins(java.util.Arrays.asList("http://localhost:3000"));
+		configuration.setAllowedOrigins(java.util.Arrays.asList(properties.getAuth().getOrigins()));
 		configuration.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 		configuration.setAllowedHeaders(java.util.Arrays.asList("*"));
 		configuration.setAllowCredentials(true);

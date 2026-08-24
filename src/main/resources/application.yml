@@ -26,3 +26,4 @@ auth:
   issuer: justen-auth
   audience: justen-api
   defaultPassword: justen@123
+  origins: http://localhost:3000
