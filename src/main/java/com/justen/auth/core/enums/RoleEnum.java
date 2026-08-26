@@ -19,9 +19,7 @@ import lombok.Getter;
 public enum RoleEnum {
 
 	DEV(UUID.fromString("0a5982c8-baa4-4e66-8614-01cf35ad4cfc"), "DEV"),
-	ADM(UUID.fromString("0b5982c8-baa4-4e66-8614-01cf35ad4cfc"), "ADM"),
-	AUTHOR(UUID.fromString("0c5982c8-baa4-4e66-8614-01cf35ad4cfc"), "AUTHOR"),
-	COLLECTOR(UUID.fromString("0d5982c8-baa4-4e66-8614-01cf35ad4cfc"), "COLLECTOR");
+	ADM(UUID.fromString("0b5982c8-baa4-4e66-8614-01cf35ad4cfc"), "ADM");
 
 	private UUID id;
 
