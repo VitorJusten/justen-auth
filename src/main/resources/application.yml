@@ -21,9 +21,29 @@ spring:
     show-sql: ${JPA_SHOW_SQL:false}
 
 auth:
-  expiration: 900
-  refresh-expiration: 604800
-  issuer: justen-auth
-  audience: justen-api
-  defaultPassword: justen@123
-  origins: http://localhost:3000
+  expiration: ${AUTH_EXPIRATION:900}
+  refresh-expiration: ${AUTH_REFRESH_EXPIRATION:604800}
+  issuer: ${AUTH_ISSUER:http://localhost:8081}
+  audience: ${AUTH_AUDIENCE:justen-api}
+  defaultPassword: ${AUTH_DEFAULT_PASSWORD:}
+  origins: ${AUTH_ORIGINS:http://localhost:3000}
+  keys:
+    algorithm: ${AUTH_KEYS_ALGORITHM:RS256}
+    key-size: ${AUTH_KEYS_SIZE:2048}
+    rotation-days: ${AUTH_KEYS_ROTATION_DAYS:90}
+    grace-period-days: ${AUTH_KEYS_GRACE_PERIOD_DAYS:7}
+  google:
+    client-id: ${GOOGLE_CLIENT_ID:}
+  steam:
+    api-key: ${STEAM_API_KEY:}
+    realm: ${STEAM_REALM:http://localhost:8081}
+  mfa:
+    issuer: ${MFA_ISSUER:JustenAuth}
+    code-length: 6
+    time-step-seconds: 30
+    window: 1
+    recovery-codes-count: 8
+  rate-limit:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    requests-per-minute: ${RATE_LIMIT_RPM:60}
+    login-requests-per-minute: ${RATE_LIMIT_LOGIN_RPM:15}

@@ -35,6 +35,18 @@ public class RefreshToken {
     @Column(name = "rt_tx_token", nullable = false)
     private String token;
 
+    @Column(name = "rt_tx_token_hash", length = 128)
+    private String tokenHash;
+
+    @Column(name = "rt_tx_family_id", length = 100)
+    private String familyId;
+
+    @Column(name = "rt_tx_ip_address", length = 64)
+    private String ipAddress;
+
+    @Column(name = "rt_tx_user_agent", columnDefinition = "TEXT")
+    private String userAgent;
+
     @Column(name = "rt_dt_expiration", nullable = false)
     private OffsetDateTime expiration;
 
@@ -43,5 +55,4 @@ public class RefreshToken {
 
     @Column(name = "rt_tx_replaced_by")
     private String replacedBy;
-	
 }

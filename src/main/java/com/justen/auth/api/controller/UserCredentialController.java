@@ -42,7 +42,14 @@ public class UserCredentialController {
 
 	@GetMapping
 	public List<UserCredentialDto> getAll() {
-		return service.findAll().stream()
+		return service.findCurrentUserCredentials().stream()
+				.map(UserCredentialDto::new)
+				.toList();
+	}
+
+	@GetMapping("/admin/user/{userId}")
+	public List<UserCredentialDto> getByUserId(@PathVariable UUID userId) {
+		return service.findByUserIdSecured(userId).stream()
 				.map(UserCredentialDto::new)
 				.toList();
 	}

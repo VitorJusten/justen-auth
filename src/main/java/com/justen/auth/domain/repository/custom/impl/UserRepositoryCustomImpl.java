@@ -64,12 +64,12 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 				    FROM user_account u
 				    JOIN user_role ur ON ur.usac_cd_id = u.usac_cd_id
 				    JOIN role r ON r.role_cd_id = ur.role_cd_id
-
-				    WHERE 1=1
 				""");
 
+		StringBuilder whereClause = new StringBuilder(" WHERE 1=1 ");
+
 		if (filter != null && !filter.isBlank()) {
-			sql.append("""
+			whereClause.append("""
 					    AND (
 					        CAST(u.usac_cd_id AS TEXT) ILIKE :filter
 					        OR u.usac_tx_username ILIKE :filter
@@ -84,37 +84,49 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 		}
 
 		if (id != null && !id.isBlank()) {
-			sql.append(" AND CAST(u.usac_cd_id AS TEXT) ILIKE :id ");
+			whereClause.append(" AND CAST(u.usac_cd_id AS TEXT) ILIKE :id ");
 		}
 
 		if (username != null && !username.isBlank()) {
-			sql.append(" AND u.usac_tx_username ILIKE :username ");
+			whereClause.append(" AND u.usac_tx_username ILIKE :username ");
 		}
 
 		if (role != null && !role.isBlank()) {
-			sql.append(" AND r.role_tx_name ILIKE :role ");
+			whereClause.append(" AND r.role_tx_name ILIKE :role ");
 		}
 
 		if (accountLocked != null) {
-			sql.append(" AND u.usac_nm_account_locked = :accountLocked ");
+			whereClause.append(" AND u.usac_nm_account_locked = :accountLocked ");
 		}
 
 		if (createdAt != null && !createdAt.isBlank()) {
-			sql.append(" AND CAST(u.usac_dt_created_at AS TEXT) ILIKE :createdAt ");
+			whereClause.append(" AND CAST(u.usac_dt_created_at AS TEXT) ILIKE :createdAt ");
 		}
 
 		if (lastLoginAt != null && !lastLoginAt.isBlank()) {
-			sql.append(" AND CAST(u.usac_dt_last_login_at AS TEXT) ILIKE :lastLoginAt ");
+			whereClause.append(" AND CAST(u.usac_dt_last_login_at AS TEXT) ILIKE :lastLoginAt ");
 		}
 
 		if (lockUntil != null && !lockUntil.isBlank()) {
-			sql.append(" AND CAST(u.usac_dt_lock_until AS TEXT) ILIKE :lockUntil ");
+			whereClause.append(" AND CAST(u.usac_dt_lock_until AS TEXT) ILIKE :lockUntil ");
 		}
 
 		if (updatedAt != null && !updatedAt.isBlank()) {
-			sql.append(" AND CAST(u.usac_dt_updated_at AS TEXT) ILIKE :updatedAt ");
+			whereClause.append(" AND CAST(u.usac_dt_updated_at AS TEXT) ILIKE :updatedAt ");
 		}
 
+		StringBuilder countSql = new StringBuilder("""
+				    SELECT COUNT(DISTINCT u.usac_cd_id)
+				    FROM user_account u
+				    JOIN user_role ur ON ur.usac_cd_id = u.usac_cd_id
+				    JOIN role r ON r.role_cd_id = ur.role_cd_id
+				""").append(whereClause);
+
+		Query countQuery = entityManager.createNativeQuery(countSql.toString());
+		setParameters(countQuery, filter, id, username, role, accountLocked, createdAt, lastLoginAt, lockUntil, updatedAt);
+		long total = ((Number) countQuery.getSingleResult()).longValue();
+
+		sql.append(whereClause);
 		sql.append("""
 				    GROUP BY
 				        u.usac_cd_id,
@@ -129,46 +141,12 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 				""");
 
 		Query query = entityManager.createNativeQuery(sql.toString());
-
-		if (filter != null && !filter.isBlank()) {
-			query.setParameter("filter", "%" + filter + "%");
-		}
-
-		if (id != null && !id.isBlank()) {
-			query.setParameter("id", "%" + id + "%");
-		}
-
-		if (username != null && !username.isBlank()) {
-			query.setParameter("username", "%" + username + "%");
-		}
-
-		if (role != null && !role.isBlank()) {
-			query.setParameter("role", "%" + role + "%");
-		}
-
-		if (accountLocked != null) {
-			query.setParameter("accountLocked", accountLocked);
-		}
-
-		if (createdAt != null && !createdAt.isBlank()) {
-			query.setParameter("createdAt", "%" + createdAt + "%");
-		}
-
-		if (lastLoginAt != null && !lastLoginAt.isBlank()) {
-			query.setParameter("lastLoginAt", "%" + lastLoginAt + "%");
-		}
-
-		if (lockUntil != null && !lockUntil.isBlank()) {
-			query.setParameter("lockUntil", "%" + lockUntil + "%");
-		}
-
-		if (updatedAt != null && !updatedAt.isBlank()) {
-			query.setParameter("updatedAt", "%" + updatedAt + "%");
-		}
+		setParameters(query, filter, id, username, role, accountLocked, createdAt, lastLoginAt, lockUntil, updatedAt);
 
 		query.setFirstResult((int) pageable.getOffset());
 		query.setMaxResults(pageable.getPageSize());
 
+		@SuppressWarnings("unchecked")
 		List<Object[]> rows = query.getResultList();
 
 		List<UserDto> users = new ArrayList<>();
@@ -199,9 +177,38 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 			users.add(dto);
 		}
 
-		long total = users.size();
-
 		return new PageImpl<>(users, pageable, total);
+	}
+
+	private void setParameters(Query query, String filter, String id, String username, String role,
+			Boolean accountLocked, String createdAt, String lastLoginAt, String lockUntil, String updatedAt) {
+		if (filter != null && !filter.isBlank()) {
+			query.setParameter("filter", "%" + filter + "%");
+		}
+		if (id != null && !id.isBlank()) {
+			query.setParameter("id", "%" + id + "%");
+		}
+		if (username != null && !username.isBlank()) {
+			query.setParameter("username", "%" + username + "%");
+		}
+		if (role != null && !role.isBlank()) {
+			query.setParameter("role", "%" + role + "%");
+		}
+		if (accountLocked != null) {
+			query.setParameter("accountLocked", accountLocked);
+		}
+		if (createdAt != null && !createdAt.isBlank()) {
+			query.setParameter("createdAt", "%" + createdAt + "%");
+		}
+		if (lastLoginAt != null && !lastLoginAt.isBlank()) {
+			query.setParameter("lastLoginAt", "%" + lastLoginAt + "%");
+		}
+		if (lockUntil != null && !lockUntil.isBlank()) {
+			query.setParameter("lockUntil", "%" + lockUntil + "%");
+		}
+		if (updatedAt != null && !updatedAt.isBlank()) {
+			query.setParameter("updatedAt", "%" + updatedAt + "%");
+		}
 	}
 
 }

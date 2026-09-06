@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+	<changeSet id="v0.02.0_evolve_schema" author="Vitor Justen">
+		<comment>Evolve schema for OAuth2, OIDC, Key Management, External Identity, MFA, and Security Audit</comment>
+
+		<sql>
+			<![CDATA[
+				-- 1. Tabela para persistência de chaves criptográficas RSA/EC
+				CREATE TABLE IF NOT EXISTS signing_key (
+					sk_cd_id UUID PRIMARY KEY,
+					sk_tx_kid VARCHAR(100) UNIQUE NOT NULL,
+					sk_tx_algorithm VARCHAR(20) NOT NULL,
+					sk_tx_public_key TEXT NOT NULL,
+					sk_tx_private_key TEXT NOT NULL,
+					sk_nm_active BOOLEAN NOT NULL DEFAULT TRUE,
+					sk_dt_created_at TIMESTAMP NOT NULL,
+					sk_dt_expires_at TIMESTAMP NOT NULL
+				);
+
+				CREATE INDEX IF NOT EXISTS ix_signing_key_active ON signing_key(sk_nm_active);
+
+				-- 2. Tabela para identidades externas federadas (Google, Steam, Discord, etc.)
+				CREATE TABLE IF NOT EXISTS external_identity (
+					exid_cd_id UUID PRIMARY KEY,
+					usac_cd_id UUID NOT NULL,
+					exid_tx_provider VARCHAR(50) NOT NULL,
+					exid_tx_provider_user_id VARCHAR(150) NOT NULL,
+					exid_tx_email VARCHAR(255),
+					exid_tx_display_name VARCHAR(255),
+					exid_dt_created_at TIMESTAMP NOT NULL,
+					exid_dt_updated_at TIMESTAMP,
+					CONSTRAINT fk_external_identity_user FOREIGN KEY (usac_cd_id) REFERENCES user_account(usac_cd_id) ON DELETE CASCADE
+				);
+
+				CREATE UNIQUE INDEX IF NOT EXISTS ux_external_identity_provider_user ON external_identity(exid_tx_provider, exid_tx_provider_user_id);
+				CREATE INDEX IF NOT EXISTS ix_external_identity_user ON external_identity(usac_cd_id);
+
+				-- 3. Tabela para credenciais MFA / TOTP
+				CREATE TABLE IF NOT EXISTS mfa_credential (
+					mfa_cd_id UUID PRIMARY KEY,
+					usac_cd_id UUID NOT NULL,
+					mfa_tx_type VARCHAR(50) NOT NULL,
+					mfa_tx_secret TEXT NOT NULL,
+					mfa_nm_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+					mfa_dt_created_at TIMESTAMP NOT NULL,
+					mfa_dt_updated_at TIMESTAMP,
+					CONSTRAINT fk_mfa_credential_user FOREIGN KEY (usac_cd_id) REFERENCES user_account(usac_cd_id) ON DELETE CASCADE
+				);
+
+				CREATE UNIQUE INDEX IF NOT EXISTS ux_mfa_credential_user_type ON mfa_credential(usac_cd_id, mfa_tx_type);
+
+				-- 4. Tabela para códigos de recuperação (backup codes) de uso único
+				CREATE TABLE IF NOT EXISTS mfa_recovery_code (
+					mfrc_cd_id UUID PRIMARY KEY,
+					usac_cd_id UUID NOT NULL,
+					mfrc_tx_code_hash VARCHAR(128) NOT NULL,
+					mfrc_nm_used BOOLEAN NOT NULL DEFAULT FALSE,
+					mfrc_dt_created_at TIMESTAMP NOT NULL,
+					mfrc_dt_used_at TIMESTAMP,
+					CONSTRAINT fk_mfa_recovery_code_user FOREIGN KEY (usac_cd_id) REFERENCES user_account(usac_cd_id) ON DELETE CASCADE
+				);
+
+				CREATE INDEX IF NOT EXISTS ix_mfa_recovery_code_user ON mfa_recovery_code(usac_cd_id);
+
+				-- 5. Tabela de logs de eventos de segurança e auditoria
+				CREATE TABLE IF NOT EXISTS security_event (
+					sece_cd_id UUID PRIMARY KEY,
+					usac_cd_id UUID,
+					sece_tx_event_type VARCHAR(80) NOT NULL,
+					sece_tx_ip_address VARCHAR(64),
+					sece_tx_user_agent TEXT,
+					sece_tx_details TEXT,
+					sece_dt_created_at TIMESTAMP NOT NULL
+				);
+
+				CREATE INDEX IF NOT EXISTS ix_security_event_user ON security_event(usac_cd_id);
+				CREATE INDEX IF NOT EXISTS ix_security_event_type ON security_event(sece_tx_event_type);
+				CREATE INDEX IF NOT EXISTS ix_security_event_date ON security_event(sece_dt_created_at);
+
+				-- 6. Evolução da tabela refresh_token para hashing seguro e rastreamento de famílias de rotação
+				ALTER TABLE refresh_token ADD COLUMN IF NOT EXISTS rt_tx_token_hash VARCHAR(128);
+				ALTER TABLE refresh_token ADD COLUMN IF NOT EXISTS rt_tx_family_id VARCHAR(100);
+				ALTER TABLE refresh_token ADD COLUMN IF NOT EXISTS rt_tx_ip_address VARCHAR(64);
+				ALTER TABLE refresh_token ADD COLUMN IF NOT EXISTS rt_tx_user_agent TEXT;
+
+				CREATE INDEX IF NOT EXISTS ix_refresh_token_hash ON refresh_token(rt_tx_token_hash);
+				CREATE INDEX IF NOT EXISTS ix_refresh_token_family ON refresh_token(rt_tx_family_id);
+			]]>
+		</sql>
+
+		<rollback>
+			DROP TABLE IF EXISTS security_event;
+			DROP TABLE IF EXISTS mfa_recovery_code;
+			DROP TABLE IF EXISTS mfa_credential;
+			DROP TABLE IF EXISTS external_identity;
+			DROP TABLE IF EXISTS signing_key;
+		</rollback>
+	</changeSet>
+
+</databaseChangeLog>

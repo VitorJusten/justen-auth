@@ -32,9 +32,9 @@ public interface UserRepository extends JpaRepository<User, UUID>, UserRepositor
 	 * @return
 	 */
 	@Query(value = """
-		    SELECT u.*
+		    SELECT DISTINCT u.*
 		    FROM user_account u
-		    JOIN user_credential uc ON uc.usac_cd_id = u.usac_cd_id
+		    LEFT JOIN user_credentials uc ON uc.usac_cd_id = u.usac_cd_id
 		    WHERE u.usac_tx_username = :credential 
 		    OR uc.uscr_tx_credential = :credential
 		""", nativeQuery = true)

@@ -69,23 +69,65 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public User create(User user) {
-		user.setPassword(passwordEncoder.encode(user.getPassword() != null ? user.getPassword() : appProperties.getAuth().getDefaultPassword()));
+		if (StringUtils.isBlank(user.getPassword())) {
+			if (StringUtils.isNotBlank(appProperties.getAuth().getDefaultPassword())) {
+				user.setPassword(appProperties.getAuth().getDefaultPassword());
+			} else {
+				throw new BusinessException("Password cannot be empty");
+			}
+		}
+
+		if (user.getPassword().length() < 8) {
+			throw new BusinessException("Password must have at least 8 characters");
+		}
+
+		if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+			throw new BusinessException("Username already in use");
+		}
+
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
 	}
 
 	@Transactional
 	public User update(UUID id, User user) {
-		if (!securityUtils.getLoggedUserId().toString().equals(id.toString())) {
+		boolean isSelf = securityUtils.getLoggedUserId().toString().equals(id.toString());
+		boolean isAdmin = false;
+		try {
 			securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
+			isAdmin = true;
+		} catch (Exception ignored) {
+		}
+
+		if (!isSelf && !isAdmin) {
+			throw new BusinessException("You do not have permission to perform this action");
 		}
 
 		User existing = getById(id);
-		
-		if(StringUtils.isNotBlank(user.getPassword())) {
+
+		if (StringUtils.isNotBlank(user.getUsername()) && !user.getUsername().equals(existing.getUsername())) {
+			if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+				throw new BusinessException("Username already in use");
+			}
+			existing.setUsername(user.getUsername());
+		}
+
+		if (StringUtils.isNotBlank(user.getPassword())) {
+			if (user.getPassword().length() < 8) {
+				throw new BusinessException("Password must have at least 8 characters");
+			}
 			existing.setPassword(passwordEncoder.encode(user.getPassword()));
 		}
 
-		BeanUtils.copyProperties(user, existing, "id", "createdAt", "password");
+		// Only admins can modify roles or locked status
+		if (isAdmin) {
+			if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+				existing.setRoles(user.getRoles());
+			}
+			if (user.getAccountLocked() != null) {
+				existing.setAccountLocked(user.getAccountLocked());
+			}
+		}
 
 		return userRepository.save(existing);
 	}
@@ -100,27 +142,30 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public void resetPassword(UUID id) {
-		 String newPassword = appProperties.getAuth().getDefaultPassword();
+		String newPassword = appProperties.getAuth().getDefaultPassword();
 		if (id != null && !securityUtils.getLoggedUserId().toString().equals(id.toString())) {
 			securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
-		} else if(id == null) {
+		} else if (id == null) {
 			id = securityUtils.getLoggedUserId();
 		}
 		User user = getById(id);
 		user.setPassword(passwordEncoder.encode(newPassword));
 		userRepository.save(user);
 	}
-	
+
 	@Transactional
 	public void updatePassword(String oldPassword, String newPassword) {
-	    User user = getById(securityUtils.getLoggedUserId());
+		if (StringUtils.isBlank(newPassword) || newPassword.length() < 8) {
+			throw new BusinessException("New password must have at least 8 characters");
+		}
+		User user = getById(securityUtils.getLoggedUserId());
 
-	    if (passwordEncoder.matches(oldPassword, user.getPassword())) {
-	        user.setPassword(passwordEncoder.encode(newPassword));
-	        userRepository.save(user);
-	    } else {
-	        throw new BusinessException("Actual password is incorrect");
-	    }
+		if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+			user.setPassword(passwordEncoder.encode(newPassword));
+			userRepository.save(user);
+		} else {
+			throw new BusinessException("Actual password is incorrect");
+		}
 	}
 
 	@Transactional

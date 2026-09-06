@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name = "user_credential")
+@Table(name = "user_credentials")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserCredential {
 

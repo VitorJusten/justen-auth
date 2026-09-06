@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.justen.auth.core.enums.CredentialTypeEnum;
+import com.justen.auth.core.enums.RoleEnum;
 import com.justen.auth.core.utils.SecurityUtils;
 import com.justen.auth.domain.exception.BusinessException;
 import com.justen.auth.domain.model.User;
@@ -91,17 +92,37 @@ public class UserCredentialService {
 		}
 	}
 
-	@Transactional()
+	@Transactional(readOnly = true)
 	public UserCredential findById(UUID id) {
-		return repository.findById(id).orElseThrow(() -> new BusinessException("UserCredential not found: " + id));
+		UserCredential credential = repository.findById(id)
+				.orElseThrow(() -> new BusinessException("UserCredential not found: " + id));
+
+		UUID loggedId = securityUtils.getLoggedUserId();
+		boolean isOwner = credential.getUser() != null && credential.getUser().getId().equals(loggedId);
+		if (!isOwner) {
+			securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
+		}
+		return credential;
 	}
 
-	@Transactional()
+	@Transactional(readOnly = true)
+	public List<UserCredential> findCurrentUserCredentials() {
+		return repository.findByUserId(securityUtils.getLoggedUserId());
+	}
+
+	@Transactional(readOnly = true)
+	public List<UserCredential> findByUserIdSecured(UUID userId) {
+		securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
+		return repository.findByUserId(userId);
+	}
+
+	@Transactional(readOnly = true)
 	public List<UserCredential> findAll() {
+		securityUtils.validateRoles(List.of(RoleEnum.ADM, RoleEnum.DEV));
 		return repository.findAll();
 	}
 
-	@Transactional()
+	@Transactional(readOnly = true)
 	public List<UserCredential> findByUserId(UUID userId) {
 		return repository.findByUserId(userId);
 	}

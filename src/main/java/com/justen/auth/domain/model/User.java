@@ -39,16 +39,27 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @Table(name = "user_account")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class User implements UserDetails {
+public class User implements UserDetails, org.springframework.data.domain.Persistable<UUID> {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "usac_cd_id")
 	@EqualsAndHashCode.Include
 	private UUID id;
+
+	@jakarta.persistence.Transient
+	private boolean isNew = true;
+
+	@Override
+	public boolean isNew() {
+		return this.isNew || this.id == null;
+	}
+
+	@jakarta.persistence.PostLoad
+	void markNotNew() {
+		this.isNew = false;
+	}
 
 	@Column(name = "usac_tx_username", unique = true, nullable = false)
 	private String username;
@@ -85,7 +96,11 @@ public class User implements UserDetails {
 
 	@PrePersist
 	public void prePersist() {
+		if (this.id == null) {
+			this.id = UUID.randomUUID();
+		}
 		this.createdAt = OffsetDateTime.now();
+		this.isNew = false;
 	}
 
 	@PreUpdate

@@ -66,11 +66,61 @@ public class AppProperties {
 
     @Data
     public static class Auth {
-        private Long expiration;
-        private Long refreshExpiration;
-        private String issuer;
-        private String audience;
-        private String defaultPassword;
-        private String origins;
+        private Long expiration = 900L;
+        private Long refreshExpiration = 604800L;
+        private String issuer = "justen-auth";
+        private String audience = "justen-api";
+        private String defaultPassword = "justen@123";
+        private String origins = "http://localhost:3000";
+        private KeyConfig keys = new KeyConfig();
+        private GoogleConfig google = new GoogleConfig();
+        private SteamConfig steam = new SteamConfig();
+        private MfaConfig mfa = new MfaConfig();
+        private RateLimitConfig rateLimit = new RateLimitConfig();
+
+        public java.util.List<String> getOriginsList() {
+            if (origins == null || origins.isBlank()) {
+                return java.util.List.of("http://localhost:3000");
+            }
+            return java.util.Arrays.stream(origins.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .toList();
+        }
+    }
+
+    @Data
+    public static class KeyConfig {
+        private String algorithm = "RS256";
+        private Integer keySize = 2048;
+        private Long rotationDays = 90L;
+        private Long gracePeriodDays = 7L;
+    }
+
+    @Data
+    public static class GoogleConfig {
+        private String clientId = "";
+    }
+
+    @Data
+    public static class SteamConfig {
+        private String apiKey = "";
+        private String realm = "http://localhost:8081";
+    }
+
+    @Data
+    public static class MfaConfig {
+        private String issuer = "JustenAuth";
+        private Integer codeLength = 6;
+        private Integer timeStepSeconds = 30;
+        private Integer window = 1;
+        private Integer recoveryCodesCount = 8;
+    }
+
+    @Data
+    public static class RateLimitConfig {
+        private Boolean enabled = true;
+        private Integer requestsPerMinute = 60;
+        private Integer loginRequestsPerMinute = 15;
     }
 }

@@ -18,12 +18,28 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @Table(name = "oauth_client")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class OAuthClient {
+public class OAuthClient implements org.springframework.data.domain.Persistable<UUID> {
     @Id
     @Column(name = "clnt_cd_id")
     @EqualsAndHashCode.Include
     private UUID id;
+
+    @jakarta.persistence.Transient
+    private boolean isNew = true;
+
+    @Override
+    public boolean isNew() {
+        return this.isNew || this.id == null;
+    }
+
+    @jakarta.persistence.PostLoad
+    @jakarta.persistence.PrePersist
+    void markNotNew() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID();
+        }
+        this.isNew = false;
+    }
 
     @Column(name = "clnt_tx_client_id", unique = true, nullable = false)
     private String clientId;

@@ -15,5 +15,7 @@ import com.justen.auth.domain.model.RefreshToken;
  */
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID> {
     Optional<RefreshToken> findByToken(String token);
+    Optional<RefreshToken> findByTokenHash(String tokenHash);
     List<RefreshToken> findByUserId(UUID userId);
+    List<RefreshToken> findByFamilyId(String familyId);
 }
